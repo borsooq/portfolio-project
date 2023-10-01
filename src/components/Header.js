@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -44,15 +44,34 @@ const Header = () => {
     }
   };
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [bannerPosition, setBannerPosition] = useState(0);
+  const handleScroll = () => {
+    if (window.scrollY > scrollPosition) {
+      setBannerPosition(0);
+    } else {
+      setBannerPosition(-200);
+    }
+    setScrollPosition(window.scrollY);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
   return (
     <Box
       position="fixed"
       top={0}
       left={0}
       right={0}
-      translateY={0}
+      translateY={bannerPosition}
+      transform={"auto"}
       transitionProperty="transform"
-      transitionDuration=".3s"
+      transitionDuration=".5s"
       transitionTimingFunction="ease-in-out"
       backgroundColor="#18181b"
     >
