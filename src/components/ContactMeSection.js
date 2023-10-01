@@ -19,7 +19,7 @@ import { useAlertContext } from "../context/alertContext";
 
 const LandingSection = () => {
   const { isLoading, response, submit } = useSubmit();
-  const { onOpen } = useAlertContext();
+  const { onOpen, onClose } = useAlertContext();
 
   const formik = useFormik({
     initialValues: {
@@ -35,11 +35,18 @@ const LandingSection = () => {
       comment: Yup.string().required().min(5).max(250),
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      console.log(values);
       submit("myurl", values);
     },
   });
+
+  useEffect(() => {
+    if (response) {
+      onOpen(response.type, response.message);
+      if (response.type === "success") {
+        formik.resetForm();
+      }
+    }
+  }, [response]);
 
   return (
     <FullScreenSection
@@ -112,7 +119,12 @@ const LandingSection = () => {
                 />
                 <FormErrorMessage>Please add some comments</FormErrorMessage>
               </FormControl>
-              <Button type="submit" colorScheme="purple" width="full">
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                colorScheme="purple"
+                width="full"
+              >
                 Submit
               </Button>
             </VStack>
